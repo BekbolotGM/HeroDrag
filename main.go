@@ -93,14 +93,14 @@ func instruction(){
 }
 func randomNameOfDrag(){
     rand.Seed(time.Now().Unix())
-dragonsName := []string{
+    dragonsName := []string{
     "BlackDragon",
     "WhiteDragon",
     "NorthDragon",
     "SourthDragon",
-}
-n := rand.Int() % len(dragonsName)
-fmt.Println("Случайное имя дракона: ", dragonsName[n])
+    }
+    n := rand.Int() % len(dragonsName)
+    fmt.Println("Случайное имя дракона: ", dragonsName[n])
 }
 
 
@@ -124,7 +124,7 @@ func nameOfHero(){
 		s := space.ReplaceAllString(hName, "")
 		
 		if s == "" || len(s) == 0{
-			fmt.Println("Имя героя не может быть безымянным")
+			fmt.Println("Имя Героя не может быть пустым")
 		}
 	if len(s)>0{
 		fmt.Println("Имя героя: ", s)
@@ -144,7 +144,7 @@ func nameOfDrag() {
 		s := space.ReplaceAllString(dName, "")
 		
 		if s == "" || len(s) == 0{
-			fmt.Println("Имя Дракона не может быть безымянным")
+			fmt.Println("Имя Дракона не может быть пустым")
 		}
 	    if len(s)>0{
 		fmt.Println("Имя Дракона: ", dName)
