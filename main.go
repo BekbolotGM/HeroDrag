@@ -8,11 +8,17 @@ import (
  "time"
 )
 var setAutoDragName bool = false
+var hName string // var HeroName
+var dName, ddName string // var DragName
+var dragHP, heroHP int
 func main(){
 	greeting()
 	mainMenu()
 	instruction()
 	selectItemMenu()
+	menuLevelOfGame()
+	selectWeapon()
+	fight1()
 }
 
 //fucntion greeting
@@ -31,7 +37,7 @@ func selectItemMenu(){
 				nameforperson()
 				break
 			}else if setAutoDragName == true{
-				fmt.Println("Задайте имя Вашего героя")
+				//fmt.Println("Задайте имя Вашего героя")
 				nameOfHero()
 				randomNameOfDrag()
 				break
@@ -99,7 +105,8 @@ func randomNameOfDrag(){
     "NorthDragon",
     "SourthDragon",
     }
-    n := rand.Int() % len(dragonsName)
+	n := rand.Int() % len(dragonsName)
+	ddName = dragonsName[n]
     fmt.Println("Случайное имя дракона: ", dragonsName[n])
 }
 
@@ -119,7 +126,7 @@ func nameOfHero(){
 		heroName :=bufio.NewScanner(os.Stdin)
 		fmt.Print("Введите имя Героя: ")
 		heroName.Scan()
-		hName := heroName.Text()
+		hName = heroName.Text()
 		space := regexp.MustCompile(`\s+`)
 		s := space.ReplaceAllString(hName, "")
 		
@@ -127,7 +134,7 @@ func nameOfHero(){
 			fmt.Println("Имя Героя не может быть пустым")
 		}
 	if len(s)>0{
-		fmt.Println("Имя героя: ", s)
+		fmt.Println("Имя героя: ", hName)
 		break
 	}
 	}
@@ -139,16 +146,114 @@ func nameOfDrag() {
 		dragName := bufio.NewScanner(os.Stdin)
 		fmt.Print("Введите имя Дракона: ")
 		dragName.Scan()
-		dName := dragName.Text()
+		dName = dragName.Text()
 		space := regexp.MustCompile(`\s+`)
-		s := space.ReplaceAllString(dName, "")
+		d := space.ReplaceAllString(dName, "")
 		
-		if s == "" || len(s) == 0{
+		if d == "" || len(d) == 0{
 			fmt.Println("Имя Дракона не может быть пустым")
 		}
-	    if len(s)>0{
+	    if len(d)>0{
 		fmt.Println("Имя Дракона: ", dName)
 		break
 	    }
 	}
+}
+
+
+func menuLevelOfGame(){
+	fmt.Println("Меню выбора уровня сложности игры")
+	fmt.Println("===========")
+	fmt.Println("1.Легкий")
+	fmt.Println("2.Средний")
+	fmt.Println("3.Сложный")
+	fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
+	for {
+		itemMenu :=bufio.NewScanner(os.Stdin)
+		itemMenu.Scan()
+		iMenu := itemMenu.Text()
+		if iMenu == "1" {
+            fmt.Println("Легкий уровень")
+		    break
+		}else if iMenu == "2" {
+			fmt.Println("Средний уровень")
+			break
+		}else if iMenu =="3"{
+			fmt.Println("Сложный уровень")
+			break
+		}else if iMenu != "1" || iMenu != "2" || iMenu != "3" {
+			fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
+		}
+	}
+}
+
+
+func selectWeapon(){
+	fmt.Println("Оружейный арсенал героя")
+	fmt.Println("=======================")
+	fmt.Println("1.Молот Тора")
+	fmt.Println("2.Лук Соколиного глаза")
+	fmt.Println("3.Меч Фродо Беггинса")
+	fmt.Println("4.Молоток Вашего Соседа")
+
+	fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора меча, 4 для выбора Молотка")
+	for {
+		itemMenu :=bufio.NewScanner(os.Stdin)
+		itemMenu.Scan()
+		iMenu := itemMenu.Text()
+		if iMenu == "1" {
+			fmt.Println("Вы выбрали Молот Тора, и нахрена!? Вы же не сможете его поднять, выберите лучше Молоток!")
+			fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора меча, 4 для выбора Молотка")
+		}else if iMenu == "2" {
+			fmt.Println("Вы выбрали Лук Соколиного Глаза")
+			break
+		}else if iMenu =="3"{
+			fmt.Println("Вы выбрали Меч Фродо Бегинса")
+			break
+		}else if iMenu == "4"{
+			fmt.Println("Вы выбрали Молоток, теперь Ваш сосед не будет стучать им в 8 утра по выходным")
+			break
+		}else if iMenu != "1" || iMenu != "2" || iMenu != "3" {
+			fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора Меча, 4 для выбора Молотка")
+		}
+	}
+}
+
+
+func fight1(){
+	fmt.Println("Погода ясная, осадки не ожидаются. Судья дает старт игре!!!")
+	fmt.Println("Битва началась!!! Крики с трибун: ДРАКА,ДРАКА,ДРАКА!!!")
+	if setAutoDragName == true {
+		fmt.Println("Уровень жизни ",hName ," || ","Уровень жизни ",ddName)
+	}else{
+		fmt.Println("Уровень жизни ",hName ," || ","Уровень жизни ",dName)
+	actionHero()
+	}
+}
+func actionHero() {
+	fmt.Println("===========================================================")
+	fmt.Println("1.Атаковать")
+	fmt.Println("2.Лечиться")
+	fmt.Println("Выберите действие героя - 1 для атаки, 2 для лечения")
+	fmt.Println("===========================================================")
+	    check := 0
+	    action :=bufio.NewScanner(os.Stdin)
+		action.Scan()
+		heroAction := action.Text()
+		switch heroAction{
+		case "1":
+		  fmt.Println("Герой атакует")
+		  
+		case "2":
+		  check = 1
+		  if check == 1{
+			  fmt.Println("Доктор сказал, что Вы симулянт и с Вами все в порядке!!!")
+		  }else {
+			  fmt.Println("Герой лечится") }
+		  
+		default:
+			fmt.Println("Выберите действие героя - 1 для атаки, 2 для обороны")
+			actionHero()
+		}
+		
 }
