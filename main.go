@@ -3,22 +3,29 @@ import (
  "fmt"
  "os"
  "bufio"
- "regexp"
- "math/rand"
- "time"
+ "io/ioutil"
+	"log"
+	"net/http"
+	"strings"
+	"encoding/json"
 )
 var setAutoDragName bool = false
 var hName string // var HeroName
 var dName, ddName string // var DragName
-var dragHP, heroHP int
+
 func main(){
 	greeting()
 	mainMenu()
-	instruction()
 	selectItemMenu()
 	menuLevelOfGame()
 	selectWeapon()
 	fight1()
+}
+hero := Hero{
+	health: 100,
+	armor: 100,
+	weapons: ["Молот Тора", "лук"],
+	damage: 10
 }
 
 //fucntion greeting
@@ -28,37 +35,36 @@ func greeting(){
 
 //function of Selecting item of menu
 func selectItemMenu(){
-	for {
+	    fmt.Println("Нажмите цифру 1 для начала игры или цифру 2 для настройки игры")
 		itemMenu :=bufio.NewScanner(os.Stdin)
 		itemMenu.Scan()
-		iMenu := itemMenu.Text()
-		if iMenu == "1" {
-			if setAutoDragName ==false{
-				nameforperson()
-				break
-			}else if setAutoDragName == true{
-				//fmt.Println("Задайте имя Вашего героя")
-				nameOfHero()
-				randomNameOfDrag()
-				break
-			}
-			
-		}else if iMenu == "2" {
-			configNameOfDragMenu()
-			break
-		}else if (iMenu != "1" || iMenu != "2"){
-			instruction()
+		iMenu := strings.TrimSpace(itemMenu.Text())
+		switch iMenu{
+			case "1": 
+				if setAutoDragName ==false{
+					nameforperson()
+					break
+				}else if setAutoDragName == true{
+					//fmt.Println("Задайте имя Вашего героя")
+					nameOfHero()
+					randomNameOfDrag()
+				}
+			case "2": 
+				configNameOfDragMenu()
+			default:
+			selectItemMenu()
 		}
-	}
 }
 
 
 //func main menu
 func mainMenu(){
+	fmt.Println("============")
 	fmt.Println("Главное меню")
 	fmt.Println("============")
 	fmt.Println("1.Начать игру")
 	fmt.Println("2.Настройки")
+	fmt.Println("====================")
 }
 
 
@@ -68,46 +74,43 @@ func configNameOfDragMenu(){
 	fmt.Println("1.Выбор пользователя")
 	fmt.Println("2.Случайное имя дракона")
 	
-	for {
 		selectSetting :=bufio.NewScanner(os.Stdin)
 		selectSetting.Scan()
-		sSetting := selectSetting.Text()
-	
-		if sSetting == "1" {
-			fmt.Println("Вы выбрали функцию ввода имени Дракона пользователем")
-			mainMenu()
-			instruction()
-			selectItemMenu()
-			break
-		}else if sSetting == "2" {
-			setAutoDragName = true
-			fmt.Println("Вы выбрали функцию случайного ввода имени Дракона")
-			mainMenu()
-			instruction()
-			selectItemMenu()
-			break
-		}else if (sSetting != "1" || sSetting != "2"){
-			fmt.Println("Нажмите цифру 1 для выбора имени Дракона пользователем, цифру 2 для случайного имени")
+		sSetting := strings.TrimSpace(selectSetting.Text())
+	    switch sSetting{
+			case "1": 
+				fmt.Println("Вы выбрали функцию ввода имени Дракона пользователем")
+				mainMenu()
+				selectItemMenu()
+			case "2":
+				setAutoDragName = true
+				fmt.Println("Вы выбрали функцию случайного ввода имени Дракона")
+				mainMenu()
+				selectItemMenu()
+			default:
+				configNameOfDragMenu()
 		}
-	}
 }
 
 
-//function instruction
-func instruction(){
-	fmt.Println("Нажмите цифру 1 для начала игры или цифру 2 для настройки игры")
-}
+
 func randomNameOfDrag(){
-    rand.Seed(time.Now().Unix())
-    dragonsName := []string{
-    "BlackDragon",
-    "WhiteDragon",
-    "NorthDragon",
-    "SourthDragon",
+	fmt.Println("Идет загрузка случайного имени дракона.....Ждите....")
+    dragName := map[string]string{}
+    response, err := http.Get("https://uinames.com/api/")
+    if err != nil {
+        fmt.Print(err.Error())
+        os.Exit(1)
     }
-	n := rand.Int() % len(dragonsName)
-	ddName = dragonsName[n]
-    fmt.Println("Случайное имя дракона: ", dragonsName[n])
+
+    responseData, err := ioutil.ReadAll(response.Body)
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    json.Unmarshal(responseData, &dragName)
+	fmt.Println("Случайное имя дракона: ",string(dragName["name"]))
+	ddName = string(dragName["name"])
 }
 
 
@@ -121,22 +124,20 @@ func nameforperson(){
 	}
 }
 
+
 func nameOfHero(){
 	for {
 		heroName :=bufio.NewScanner(os.Stdin)
 		fmt.Print("Введите имя Героя: ")
 		heroName.Scan()
-		hName = heroName.Text()
-		space := regexp.MustCompile(`\s+`)
-		s := space.ReplaceAllString(hName, "")
-		
-		if s == "" || len(s) == 0{
+		hName = strings.TrimSpace(heroName.Text())
+		if hName == ""{
 			fmt.Println("Имя Героя не может быть пустым")
 		}
-	if len(s)>0{
-		fmt.Println("Имя героя: ", hName)
-		break
-	}
+	    if len(hName)>0{
+		  fmt.Println("Имя героя: ", hName)
+		 break
+	    }
 	}
 }
 
@@ -146,14 +147,13 @@ func nameOfDrag() {
 		dragName := bufio.NewScanner(os.Stdin)
 		fmt.Print("Введите имя Дракона: ")
 		dragName.Scan()
-		dName = dragName.Text()
-		space := regexp.MustCompile(`\s+`)
-		d := space.ReplaceAllString(dName, "")
+		dName = strings.TrimSpace(dragName.Text())
 		
-		if d == "" || len(d) == 0{
+		
+		if dName == ""{
 			fmt.Println("Имя Дракона не может быть пустым")
 		}
-	    if len(d)>0{
+	    if len(dName)>0{
 		fmt.Println("Имя Дракона: ", dName)
 		break
 	    }
@@ -168,23 +168,23 @@ func menuLevelOfGame(){
 	fmt.Println("2.Средний")
 	fmt.Println("3.Сложный")
 	fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
-	for {
+	
 		itemMenu :=bufio.NewScanner(os.Stdin)
 		itemMenu.Scan()
 		iMenu := itemMenu.Text()
-		if iMenu == "1" {
-            fmt.Println("Легкий уровень")
-		    break
-		}else if iMenu == "2" {
-			fmt.Println("Средний уровень")
-			break
-		}else if iMenu =="3"{
-			fmt.Println("Сложный уровень")
-			break
-		}else if iMenu != "1" || iMenu != "2" || iMenu != "3" {
-			fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
-		}
-	}
+		switch iMenu {
+			case "1": 
+				fmt.Println("Легкий уровень")
+				
+			case "2": 
+				fmt.Println("Средний уровень")
+				
+			case "3":
+				fmt.Println("Сложный уровень")
+				
+			default:
+				menuLevelOfGame()
+			}
 }
 
 
@@ -197,39 +197,39 @@ func selectWeapon(){
 	fmt.Println("4.Молоток Вашего Соседа")
 
 	fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора меча, 4 для выбора Молотка")
-	for {
+	
 		itemMenu :=bufio.NewScanner(os.Stdin)
 		itemMenu.Scan()
 		iMenu := itemMenu.Text()
-		if iMenu == "1" {
+		switch iMenu {
+        case "1":
 			fmt.Println("Вы выбрали Молот Тора, и нахрена!? Вы же не сможете его поднять, выберите лучше Молоток!")
 			fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора меча, 4 для выбора Молотка")
-		}else if iMenu == "2" {
+		case "2":
 			fmt.Println("Вы выбрали Лук Соколиного Глаза")
-			break
-		}else if iMenu =="3"{
+		case "3":
 			fmt.Println("Вы выбрали Меч Фродо Бегинса")
-			break
-		}else if iMenu == "4"{
+		case "4":
 			fmt.Println("Вы выбрали Молоток, теперь Ваш сосед не будет стучать им в 8 утра по выходным")
-			break
-		}else if iMenu != "1" || iMenu != "2" || iMenu != "3" {
+		default:
 			fmt.Println("Нажмите цифру 1 для выбора Молота, 2 для выбора Лука, 3 для выбора Меча, 4 для выбора Молотка")
+			selectWeapon()
 		}
-	}
 }
 
 
-func fight1(){
+func fight1() {
 	fmt.Println("Погода ясная, осадки не ожидаются. Судья дает старт игре!!!")
 	fmt.Println("Битва началась!!! Крики с трибун: ДРАКА,ДРАКА,ДРАКА!!!")
 	if setAutoDragName == true {
 		fmt.Println("Уровень жизни ",hName ," || ","Уровень жизни ",ddName)
+		actionHero()
 	}else{
 		fmt.Println("Уровень жизни ",hName ," || ","Уровень жизни ",dName)
-	actionHero()
+	    actionHero()
 	}
 }
+
 func actionHero() {
 	fmt.Println("===========================================================")
 	fmt.Println("1.Атаковать")
