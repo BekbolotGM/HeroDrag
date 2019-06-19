@@ -21,16 +21,10 @@ func main(){
 	selectWeapon()
 	fight1()
 }
-hero := Hero{
-	health: 100,
-	armor: 100,
-	weapons: ["Молот Тора", "лук"],
-	damage: 10
-}
 
 //fucntion greeting
 func greeting(){
-	fmt.Println("Добро пожаловать в игру Герой против Дракона!")
+	fmt.Println("Добро пожаловать в игру Герой против Дракона!!!")
 }
 
 //function of Selecting item of menu
