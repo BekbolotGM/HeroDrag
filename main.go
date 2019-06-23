@@ -10,7 +10,6 @@ import (
  "encoding/json"
  "time"
  "math/rand"
- //"io"
 )
 
 var timer1 *time.Timer
@@ -74,26 +73,16 @@ func selectItemMenu(){
 		}
 }
 
-
 //func main menu
 func mainMenu(){
-	fmt.Println("============")
-	fmt.Println("Главное меню")
-	fmt.Println("============")
-	fmt.Println("1.Начать новую игру")
-	fmt.Println("2.Настройки")
-	fmt.Println("3.Продолжить сохраненную игру")
-	fmt.Println("====================")
+	fmt.Println("============\nГлавное меню\n=========")
+	fmt.Println("1.Начать новую игру \n2.Настройки \n3.Продолжить сохраненную игру\n============")
 }
-
 
 //function of config dragon name
 func configNameOfDragMenu(){
-	fmt.Println("Нажмите цифру 1 для выбора имени дракона пользователем, цифру 2 для случайного имени")
-	fmt.Println("1.Выбор пользователя")
-	fmt.Println("2.Случайное имя дракона")
-	
-		selectSetting :=bufio.NewScanner(os.Stdin)
+	fmt.Println("Нажмите цифру 1 для выбора имени дракона пользователем, цифру 2 для случайного имени \n1.Выбор пользователя \n2.Случайное имя дракона")
+	  selectSetting :=bufio.NewScanner(os.Stdin)
 		selectSetting.Scan()
 		sSetting := strings.TrimSpace(selectSetting.Text())
 	    switch sSetting{
@@ -111,8 +100,6 @@ func configNameOfDragMenu(){
 		}
 }
 
-
-
 func randomNameOfDrag(){
 	fmt.Println("Идет загрузка случайного имени дракона.....Ждите....")
     dragName := map[string]string{}
@@ -121,17 +108,14 @@ func randomNameOfDrag(){
         fmt.Print(err.Error())
         os.Exit(1)
     }
-
-    responseData, err := ioutil.ReadAll(response.Body)
+  responseData, err := ioutil.ReadAll(response.Body)
     if err != nil {
         log.Fatal(err)
     }
-
-    json.Unmarshal(responseData, &dragName)
+  json.Unmarshal(responseData, &dragName)
 	fmt.Println("Случайное имя дракона: ",string(dragName["name"]))
 	dInfo.Name = string(dragName["name"])
 }
-
 
 //function of selecting person name
 func nameforperson(){
@@ -142,7 +126,6 @@ func nameforperson(){
 		nameOfHero()
 	}
 }
-
 
 func nameOfHero(){
 	for {
@@ -160,15 +143,12 @@ func nameOfHero(){
 	}
 }
 
-
 func nameOfDrag() {
 	for {
 		dragName := bufio.NewScanner(os.Stdin)
 		fmt.Print("Введите имя Дракона: ")
 		dragName.Scan()
 		dInfo.Name = strings.TrimSpace(dragName.Text())
-		
-		
 		if dInfo.Name == ""{
 			fmt.Println("Имя Дракона не может быть пустым")
 		}
@@ -179,14 +159,12 @@ func nameOfDrag() {
 	}
 }
 
-
 func menuLevelOfGame(){
 	fmt.Println("Меню выбора уровня сложности игры")
 	fmt.Println("===========")
 	fmt.Println("1.Легкий \n2.Средний\n3.Сложный")
 	fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
-	
-		itemMenu :=bufio.NewScanner(os.Stdin)
+	  itemMenu :=bufio.NewScanner(os.Stdin)
 		itemMenu.Scan()
 		iMenu := itemMenu.Text()
 		switch iMenu {
@@ -194,13 +172,11 @@ func menuLevelOfGame(){
 			  savedInfo.Level = 1
 				fmt.Println("ЛЕГКИЙ УРОВЕНЬ")
 				level1()
-				
 			case "2": 
 			  savedInfo.Level = 2
 				fmt.Println("СРЕДНИЙ УРОВЕНЬ")
 				level2()
-
-			case "3":
+      case "3":
 				savedInfo.Level = 3
 				fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
 				go level3()
@@ -210,18 +186,11 @@ func menuLevelOfGame(){
 			}
 }
 
-
 func selectWeapon(){
-	fmt.Println("Оружейный арсенал героя")
-	fmt.Println("=======================")
-	fmt.Println("1.Меч")
-	fmt.Println("2.Топор")
-	fmt.Println("3.Коса")
-	fmt.Println("4.Серп")
-
-	fmt.Println("Нажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
-	
-		itemMenu :=bufio.NewScanner(os.Stdin)
+	fmt.Println("Оружейный арсенал героя\n===================")
+	fmt.Println("1.Меч \n2.Топор \n3.Коса \n4.Серп\nНажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
+  fmt.Println("")
+	  itemMenu :=bufio.NewScanner(os.Stdin)
 		itemMenu.Scan()
 		iMenu := itemMenu.Text()
 		switch iMenu {
@@ -242,8 +211,6 @@ func selectWeapon(){
 			selectWeapon()
 		}
 }
-
-
 
 func level1() {
 	heroHealthMsg := "Уровень жизни героя: "
@@ -372,8 +339,6 @@ func level2() {
 				if dInfo.Health > 0 {
 					fmt.Println ( dragHealthMsg, dInfo.Health )//инфа о уровни жизни дракона
 				}
-				
-	        
 				if dInfo.Health <= 0 { //проверка если уровень жизни дракона ноль, то герой выигрывает
 					dInfo.Health = 0 //здесь присваиваем ноль чтобы жизнь не уходила в минус
 					fmt.Println(heroHealthMsg,hInfo.Health)// показывает уровень жизни героя
@@ -384,16 +349,13 @@ func level2() {
 				}
 			}
 			
-		
-
-			fmt.Println("\n")
+		  fmt.Println("\n")
 			rand.Seed(time.Now().Unix())
 	        missORnot = []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
 	        n := rand.Int() % len(missORnot)
 	        nn := missORnot[n]
-	       
-
-			if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
+			
+					if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
 				dInfo.Count += 1//счтечик хода дракона
 				if dInfo.Anger == 30{
 					fmt.Println("Дракон зол, +20 к Его урону, +больше шансов промахнуться")
@@ -452,21 +414,15 @@ func level3() {
 	heroHealthMsg := "Уровень жизни героя: "
 	dragHealthMsg := "Уровень жизни дракона: "
 	weaponGObad := 1
-	
 	for {	
 		rand.Seed(time.Now().UnixNano())
 		randomNumofHero := random(1, 10)
 		randomNumofDrag := random(1, 20)
-
-	  actionHero()
-	
-    
-		if hInfo.hAct == true {
+    actionHero()
+	  if hInfo.hAct == true {
 			timer1.Stop()
 			if hInfo.Health > 0{ //герой наносит удар if true
 				hInfo.Count += 1 //cчетчик
-				
-					
 				randomNumofHero -= weaponGObad //оружие тупится с каждым ударом на 1
 				if randomNumofHero < 0 {
 					randomNumofHero = 0
@@ -487,7 +443,6 @@ func level3() {
 				if nn%2 == 0 { //еслти тру, то +40 к урону героя
 					randomNumofHero +=40
 				}
-				
 				dInfo.Health = dInfo.Health - randomNumofHero//минус жизни дракона
 				if dInfo.Health > 0 {
 					fmt.Println ( dragHealthMsg, dInfo.Health )
@@ -501,13 +456,10 @@ func level3() {
 					os.Exit(1)
 				}
 			}
-			
-		  fmt.Println("\n")
-
-			if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
+			fmt.Println("\n")
+      if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
 				dInfo.Count += 1
 				fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-				
 				hInfo.Health = hInfo.Health - randomNumofDrag
 				if hInfo.Health > 0{
 					fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
@@ -544,73 +496,65 @@ func level3() {
 			 go time1()
 		 }
 	}
-
 }
+
 func random(min int, max int) int {
 	return rand.Intn(max-min) + min
 }
 
 func actionHero() string {
-	
-	fmt.Println("===========================================================")
-	fmt.Println("1.Атаковать")
-	fmt.Println("2.Лечиться")
-	fmt.Println("3.Сохранить игру и выйти")
-	fmt.Println("Выберите действие героя - 1 для атаки, 2 для лечения, 3 сохранения игры")
-	fmt.Println("===========================================================")
-	   
-	  action :=bufio.NewScanner(os.Stdin)
+	fmt.Println("=========\n1.Атаковать\n2.Лечиться\n3.Сохранить и выйти\nВыберите действие героя - 1 для атаки, 2 для лечения, 3 сохранения игры\n==============")
+    action :=bufio.NewScanner(os.Stdin)
 		action.Scan()
 		heroAction := action.Text()
 		switch heroAction{
 		case "1":
 		  hInfo.hAct = true
 			hInfo.hHealthUp = false
-		
-   case "2":
+		case "2":
 		 hInfo.hAct = false
 		if hInfo.Health == 100{
 			fmt.Println("Доктор сказал, что Вы симулянт и с Вами все в порядке!!!")
-	
-		} else {
+	  } else {
 			hInfo.hHealthUp = true
 		}
-	case "3":
+	  case "3":
 		saveGame()
 		os.Exit(1)
 	default:
 		actionHero()
-	  
-		}
+	}
 		return heroAction
 }
+
 type Q struct{
 	Quotes map[string]interface{} `json:"quotes"`
 }
+
 func randomQuote(){
 	response, err := http.Get("https://aitorp6.herokuapp.com/quotes/api/random")
 	if err != nil {
 			fmt.Print(err.Error())
 			os.Exit(1)
 	}
-
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
 			log.Fatal("Ошибка интернет соединения",err)
 	}
 	var quotes Q
-
-	json.Unmarshal([]byte(responseData), &quotes)
+  json.Unmarshal([]byte(responseData), &quotes)
 	fmt.Println("Ваш бонус: ",quotes.Quotes["quote"],"==Автор цитаты: ", quotes.Quotes["author"])
 }
+
 func time1(){
 	timer1 = time.NewTimer(5 * time.Second)
 	<-timer1.C
 	fmt.Println("Время вышло! Вы проиграли.")
 	os.Exit(1)
 }
+
 func saveGame(){
-data := &Save{ HeroName: hInfo.Name ,DragName: dInfo.Name, Weaponn: hInfo.Weapon,
+ data := &Save{ HeroName: hInfo.Name ,DragName: dInfo.Name, Weaponn: hInfo.Weapon,
 							 HeroHealth: hInfo.Health, DragHealth:dInfo.Health,
 							 HeroFatique: hInfo.Fatique, DragFatique: dInfo.Fatique,
 							 HeroAnger: hInfo.Anger, DragAnger: dInfo.Anger,
@@ -618,26 +562,21 @@ data := &Save{ HeroName: hInfo.Name ,DragName: dInfo.Name, Weaponn: hInfo.Weapon
 							 Level: savedInfo.Level,
 							 SaveORnot: true,
              }
-b, err := json.Marshal(data)
-if err != nil {
-fmt.Println(err)
-return
-}
-
-file, err := os.Create("savingData.json")
-
-if err != nil{
-fmt.Println("Невозможно создать файл:", err) 
-os.Exit(1) 
-}else{
+ b, err := json.Marshal(data)
+ if err != nil {
+ fmt.Println(err)
+ return
+ }
+ file, err := os.Create("savingData.json")
+ if err != nil{
+ fmt.Println("Невозможно создать файл:", err) 
+ os.Exit(1) 
+ }else{
 	fmt.Println("Игра сохранена.")
+ }
+ defer file.Close() 
+ file.WriteString(string(b))
 }
-defer file.Close() 
-file.WriteString(string(b))
-
-}
-
-
 
 func continueGame() {
 	file, err := os.Open("savingData.json")
@@ -669,9 +608,8 @@ func continueGame() {
 		dInfo.Count   = int(md["DragCount"].(float64))
 		savedInfo.Level = int(md["Level"].(float64))
 		savedInfo.SaveORnot = md["SaveORnot"].(bool)
-		fmt.Println("Данные сохраненной игры:")
-		fmt.Println("Уровень игры: ", savedInfo.Level)
-		fmt.Println("Имя героя: ",hInfo.Name,   "Оружие героя: ",hInfo.Weapon, "Уровень жизни: ",hInfo.Health, "Кол-во ходов: ",hInfo.Count)
+		fmt.Println("Данные сохраненной игры:\nУровень игры: ", savedInfo.Level)
+		fmt.Println("Имя героя: ",  hInfo.Name, "Оружие героя: ", hInfo.Weapon, "Уровень жизни: ",hInfo.Health, "Кол-во ходов: ",hInfo.Count)
 		fmt.Println("Имя дракона: ",dInfo.Name, "Уровень жизни: ",dInfo.Health, "Кол-во ходов: ",dInfo.Count)
 		fmt.Println("\n")
 	  if savedInfo.Level == 1 {
@@ -683,5 +621,4 @@ func continueGame() {
 			go level3()
 			time1()
 	  }
-
 }
