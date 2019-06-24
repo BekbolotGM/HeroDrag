@@ -16,13 +16,13 @@ var timer1 *time.Timer
 
 type Hero struct {
 	Name string
-	Health, Armor, Damage,Fatique, Anger, Count int
+	Health, Armor, Damage,Fatique, Anger, Count,RandomNumofHero int
 	Weapon string
 	hAct, hHealthUp bool
 }
 type Drag struct{
 	Name string
-	Health, Damage, Fatique, Anger, Count int
+	Health, Damage, Fatique, Anger, Count,RandomNumofDrag int
 	setAutoDragName bool
 }
 type Save struct {
@@ -31,9 +31,9 @@ type Save struct {
 	SaveORnot bool
 }
 
-var ( dInfo = &Drag { "", 100, 20, 0, 0, 0, false,})
+var ( dInfo = &Drag { "", 100, 20, 0, 0, 0, 0, false,})
 var ( hInfo = &Hero { 
-	"", 100, 30, 20, 0, 0,0,"", false, false,
+	"", 100, 30, 20, 0, 0, 0, 0,"", false, false,
     }
 )
 var (savedInfo = &Save {})
@@ -168,11 +168,11 @@ func menuLevelOfGame(){
 			case "2": 
 			  savedInfo.Level = 2
 				fmt.Println("СРЕДНИЙ УРОВЕНЬ")
-				level2()
-      case "3":
+				level1()
+            case "3":
 				savedInfo.Level = 3
 				fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
-				go level3()
+			    go level1()
 				time1()
 			default:
 				menuLevelOfGame()
@@ -208,233 +208,38 @@ func selectWeapon(){
 func level1() {
 	heroHealthMsg := "Уровень жизни героя: "
 	dragHealthMsg := "Уровень жизни дракона: "
-	
+	weaponGObad:=1
 	for {
 		rand.Seed(time.Now().UnixNano())
-		randomNumofHero := random(1, 20)
-		randomNumofDrag := random(1, 20)
-		actionHero()
-		
-		if hInfo.hAct == true {
-			if hInfo.Health > 0{ //герой наносит удар if true
-				hInfo.Count += 1 //cчетчик
-				fmt.Println("Герой наносит  удар!","Кол-во ходов Героя: ",hInfo.Count)//сколько ударов нанес герой
-				
-				dInfo.Health = dInfo.Health - randomNumofHero//минус жизни дракона
-				if dInfo.Health > 0 {
-					fmt.Println ( dragHealthMsg, dInfo.Health )
-				}
-				if dInfo.Health <= 0 {
-					dInfo.Health = 0
-					fmt.Println(heroHealthMsg,hInfo.Health)// показывает уровень жизни героя
-					fmt.Println(dragHealthMsg,dInfo.Health," Количество ходов Дракона: ",dInfo.Count)//уровень жизни героя и кол-во ходов дракона
-					fmt.Println("Урааааа!!! Поздравляем, Вы выиграли!!! В качестве бонуса Вы получите крутую цитату...Ждите")
-					randomQuote()
-					break
-				}
-			}
-			
-		
-
-			//fmt.Println("\n")
-
-			if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
-				dInfo.Count += 1
-				fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-				
-				hInfo.Health = hInfo.Health - randomNumofDrag
-				if hInfo.Health > 0{
-					fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
-				}
-				if hInfo.Health <= 0 { //если уровень жизни героя ушел в минус
-					hInfo.Health = 0   //то присвоем ноль 
-					fmt.Println(heroHealthMsg,hInfo.Health, "Кол-во ходов Героя: ", hInfo.Count)//инфа о жизни героя и о кол-ве ходов
-					fmt.Println(dragHealthMsg,dInfo.Health) //инф-ия о жизни дракона
-					fmt.Println("Неудача!!! Вы проиграли!!!")
-					break
-				}
-			} else if randomNumofDrag%2 == 0{
-				dInfo.Health += 10 //Плюс для жизни дракона
-				if dInfo.Health > 100 {
-				   dInfo.Health = 100
-				}
-				fmt.Println("Дракон решил зализать раны")
-				fmt.Println(dragHealthMsg,dInfo.Health, heroHealthMsg,hInfo.Health)//инф-ия о жизни персонажей
-			}
-		 }
-		 if hInfo.hHealthUp == true{
-			hInfo.Health +=10
-			if hInfo.Health > 100{
-				hInfo.Health = 100
-			}
-			fmt.Println("Герой подлечился ", heroHealthMsg, hInfo.Health, dragHealthMsg,dInfo.Health)
-			fmt.Println("===========")
-			fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-			hInfo.Health = hInfo.Health - randomNumofDrag
-			fmt.Println(heroHealthMsg,hInfo.Health) 
-		 }
-  }
-}
-
-func level2() {
-	heroHealthMsg := "Уровень жизни героя: "
-	dragHealthMsg := "Уровень жизни дракона: "
-	for {
-		rand.Seed(time.Now().UnixNano())
-		randomNumofHero := random(1, 20)
-		randomNumofDrag := random(1, 20)
-		randomEvent := randomNumofDrag + randomNumofHero
-		if randomEvent < 6 && randomEvent%2 != 0{
-		  fmt.Println("Случайное событие! Молния ударила Героя и отняла 20 hp")
-		  hInfo.Health -=20
-		  if hInfo.Health > 0{ //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни героя не отобразится
-			fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
-		  }
-		}else if randomEvent < 6 && randomEvent%2 == 0{
-		  fmt.Println("Случайное событие! Молния ударила Дракона и отняла 20 hp")
-		  dInfo.Health -=20
-		  if dInfo.Health > 0 { //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни дракона не отобразится
-			fmt.Println ( dragHealthMsg, dInfo.Health )//инфа о уровни жизни дракона
-		  }
+		if savedInfo.Level == 3{
+		hInfo.RandomNumofHero = random(1, 10)	
+		}else{
+		hInfo.RandomNumofHero = random(1, 20)
 		}
-		actionHero()
+		dInfo.RandomNumofDrag = random(1, 20)
 		
-		if hInfo.hAct == true {
-			rand.Seed(time.Now().Unix())
-	        missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
-	        h := rand.Int() % len(missORnot)
-	        hh := missORnot[h]
-	       
-			if hInfo.Health > 0{ //герой наносит удар if true
-				hInfo.Count += 1 //cчетчик ходов
-				if hInfo.Anger == 30{
-					fmt.Println("Герой зол, +20 к Его урону, +больше шансов промахнуться")
-				}
-				if hInfo.Anger == 30 && hh%2 == 0{
-					randomNumofHero +=20
-				}else if hInfo.Anger == 30 && hh%2 != 0 {
-					randomNumofHero = 0
-				}
-				fmt.Println("Герой наносит  удар!","Кол-во ходов Героя: ",hInfo.Count)//сколько ударов нанес герой
-				if hInfo.Anger == 30 && hh%2 != 0{
-					fmt.Println("Герой промахнулся!!!")
-				}
-				hInfo.Fatique += 5//если герой нанес удар, то усталость +5
-				dInfo.Anger +=5 //после каждого удара героя, злость дракона растет на 5
-				if hInfo.Fatique == 30 && randomNumofHero%2 !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
-					fmt.Println("Герой промахнулся!")
-					randomNumofHero = 0
-					hInfo.Fatique = 0//обнуляем усталость героя
-				}
-				dInfo.Health = dInfo.Health - randomNumofHero//минус жизни дракона
-				if dInfo.Health > 0 {
-					fmt.Println ( dragHealthMsg, dInfo.Health )//инфа о уровни жизни дракона
-				}
-				if dInfo.Health <= 0 { //проверка если уровень жизни дракона ноль, то герой выигрывает
-					dInfo.Health = 0 //здесь присваиваем ноль чтобы жизнь не уходила в минус
-					fmt.Println(heroHealthMsg,hInfo.Health)// показывает уровень жизни героя
-					fmt.Println(dragHealthMsg,dInfo.Health," Количество ходов Дракона: ",dInfo.Count)//уровень жизни героя и кол-во ходов дракона
-					fmt.Println("Урааааа!!! Поздравляем, Вы выиграли!!! В качестве бонуса Вы получите крутую цитату...Ждите")
-					randomQuote()
-					break
-				}
-			}
-			
-		  //fmt.Println("\n")
-			rand.Seed(time.Now().Unix())
-	        missORnot = []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
-	        n := rand.Int() % len(missORnot)
-	        nn := missORnot[n]
-			
-					if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
-				dInfo.Count += 1//счтечик хода дракона
-				if dInfo.Anger == 30{
-					fmt.Println("Дракон зол, +20 к Его урону, +больше шансов промахнуться")
-				}
-				if dInfo.Anger == 30 && nn%2 == 0 { //если уровень злости равен 30 и остаток от деления равен нулю то +20 к урону
-					randomNumofDrag +=20
-				}else if dInfo.Anger == 30 && nn%2 != 0{
-					randomNumofDrag = 0
-				}
-				fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-				if dInfo.Anger == 30 && nn%2 != 0{
-					fmt.Println("Дракон промахнулся!!!")
-				}
-				hInfo.Anger += 5
-				dInfo.Fatique += 5//если дракон нанес удар, то усталость +5
-				if dInfo.Fatique == 30 && randomNumofDrag%2 !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
-					fmt.Println("Дракон промахнулся!")
-					randomNumofDrag = 0
-					dInfo.Fatique = 0//обнуляем усталость дракона
-				}
-				hInfo.Health = hInfo.Health - randomNumofDrag
-				if hInfo.Health > 0{
-				  fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
-				}
-				if hInfo.Health <= 0 { //проверака если уровень жизни героя ноль то дракон побеждает 
-					hInfo.Health = 0   //здесь присваиваем ноль чтобы жизнь не уходила в минус
-					fmt.Println(heroHealthMsg,hInfo.Health, "Кол-во ходов Героя: ", hInfo.Count)//инфа о жизни героя и о кол-ве ходов
-					fmt.Println(dragHealthMsg,dInfo.Health) //инф-ия о жизни дракона
-					fmt.Println("Неудача!!! Вы проиграли!!!")
-					break
-				}
-			} else if randomNumofDrag%2 == 0{
-				dInfo.Health += 10 //Плюс для жизни дракона
-				if dInfo.Health > 100 {
-				   dInfo.Health = 100 //присваиваем 100 чтобы жизнь не превышала 100 hp
-				}
-				fmt.Println("Дракон решил зализать раны")
-				fmt.Println(dragHealthMsg,dInfo.Health, heroHealthMsg,hInfo.Health)//инф-ия о жизни персонажей
-			}
-		 }
-		 if hInfo.hHealthUp == true{
-			hInfo.Health +=10 //плюс для жизни героя
-			if hInfo.Health > 100{
-				hInfo.Health = 100 //присваиваем 100 чтобы жизнь не превышала 100 hp
-			}
-			fmt.Println("Герой подлечился ", heroHealthMsg, hInfo.Health, dragHealthMsg,dInfo.Health) // инф-ия о жизни героя и дракона
-			fmt.Println("===========")
-			fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-			hInfo.Health = hInfo.Health - randomNumofDrag
-			fmt.Println(heroHealthMsg,hInfo.Health) 
-		  }
-	}
-}
+		actionHero()
 
-func level3() {
-	heroHealthMsg := "Уровень жизни героя: "
-	dragHealthMsg := "Уровень жизни дракона: "
-	weaponGObad := 1
-	for {	
-		rand.Seed(time.Now().UnixNano())
-		randomNumofHero := random(1, 10)
-		randomNumofDrag := random(1, 20)
-    actionHero()
-	  if hInfo.hAct == true {
-			timer1.Stop()
+		if savedInfo.Level == 2{
+			randomEvent()
+		}
+		if hInfo.hAct == true {
+			if savedInfo.Level == 3{
+				timer1.Stop()
+				armor()
+			}
 			if hInfo.Health > 0{ //герой наносит удар if true
 				hInfo.Count += 1 //cчетчик
-				randomNumofHero -= weaponGObad //оружие тупится с каждым ударом на 1
-				if randomNumofHero < 0 {
-					randomNumofHero = 0
-				}
-				rand.Seed(time.Now().Unix())
-				missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, 19,21,31,33,37,39, }
-				n := rand.Int() % len(missORnot)
-				nn := missORnot[n]
-				if hInfo.Health < 80 && nn%2 == 0 {
-					fmt.Println("Активирована броня +",hInfo.Armor,"hp")
-					hInfo.Health +=hInfo.Armor
-				}
-				if hInfo.Health > 100{
-					hInfo.Health = 100
+                if savedInfo.Level == 3{
+					angerHero()
 				}
 				fmt.Println("Герой наносит  удар!","Кол-во ходов Героя: ",hInfo.Count)//сколько ударов нанес герой
-				
-				if nn%2 == 0 { //еслти тру, то +40 к урону героя
-					randomNumofHero +=40
+				if savedInfo.Level ==  2{
+					hInfo.RandomNumofHero -=weaponGObad // оружие тупится
+					fatiqueHero()
 				}
-				dInfo.Health = dInfo.Health - randomNumofHero//минус жизни дракона
+				dInfo.Health = dInfo.Health - hInfo.RandomNumofHero//минус жизни дракона
+				
 				if dInfo.Health > 0 {
 					fmt.Println ( dragHealthMsg, dInfo.Health )
 				}
@@ -444,25 +249,26 @@ func level3() {
 					fmt.Println(dragHealthMsg,dInfo.Health," Количество ходов Дракона: ",dInfo.Count)//уровень жизни героя и кол-во ходов дракона
 					fmt.Println("Урааааа!!! Поздравляем, Вы выиграли!!! В качестве бонуса Вы получите крутую цитату...Ждите")
 					randomQuote()
-					os.Exit(1)
+					break
 				}
 			}
-			//fmt.Println("\n")
-      if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
+			
+	        //fmt.Println("\n")
+
+			if dInfo.Health > 0 && dInfo.RandomNumofDrag%2 !=0 {
 				dInfo.Count += 1
-				fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-				hInfo.Health = hInfo.Health - randomNumofDrag
+					if savedInfo.Level == 3{
+						angerDrag()
+					}
+					fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
+				if savedInfo.Level == 2{
+					fatiqueDrag()
+				}
+				hInfo.Health = hInfo.Health - dInfo.RandomNumofDrag
 				if hInfo.Health > 0{
 					fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
 				}
-				if hInfo.Health <= 0 { //если уровень жизни героя ушел в минус
-					hInfo.Health = 0   //то присвоем ноль 
-					fmt.Println(heroHealthMsg,hInfo.Health, "Кол-во ходов Героя: ", hInfo.Count)//инфа о жизни героя и о кол-ве ходов
-					fmt.Println(dragHealthMsg,dInfo.Health) //инф-ия о жизни дракона
-					fmt.Println("Неудача!!! Вы проиграли!!!")
-					os.Exit(1)
-				}
-			} else if randomNumofDrag%2 == 0{
+			} else if dInfo.RandomNumofDrag%2 == 0{
 				dInfo.Health += 10 //Плюс для жизни дракона
 				if dInfo.Health > 100 {
 				   dInfo.Health = 100
@@ -472,7 +278,6 @@ func level3() {
 			}
 		 }
 		 if hInfo.hHealthUp == true{
-		  timer1.Stop()
 			hInfo.Health +=10
 			if hInfo.Health > 100{
 				hInfo.Health = 100
@@ -480,13 +285,20 @@ func level3() {
 			fmt.Println("Герой подлечился ", heroHealthMsg, hInfo.Health, dragHealthMsg,dInfo.Health)
 			fmt.Println("===========")
 			fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-			hInfo.Health = hInfo.Health - randomNumofDrag
+			hInfo.Health = hInfo.Health - dInfo.RandomNumofDrag
 			fmt.Println(heroHealthMsg,hInfo.Health) 
 		 }
+		 if hInfo.Health <= 0 { //если уровень жизни героя ушел в минус
+			hInfo.Health = 0   //то присвоем ноль 
+			fmt.Println(heroHealthMsg,hInfo.Health, "Кол-во ходов Героя: ", hInfo.Count)//инфа о жизни героя и о кол-ве ходов
+			fmt.Println(dragHealthMsg,dInfo.Health) //инф-ия о жизни дракона
+			fmt.Println("Неудача!!! Вы проиграли!!!")
+			break
+		}
 		 if hInfo.hAct == false || hInfo.hHealthUp == false{
 			 go time1()
 		 }
-	}
+    }
 }
 
 func random(min int, max int) int {
@@ -501,7 +313,7 @@ func actionHero() string {
 		switch heroAction{
 		case "1":
 		  hInfo.hAct = true
-			hInfo.hHealthUp = false
+		  hInfo.hHealthUp = false
 		case "2":
 		 hInfo.hAct = false
 		if hInfo.Health == 100{
@@ -607,13 +419,104 @@ func continueGame() {
 		case 1:
 			level1()
 		case 2:
-			level2()
+			level1()
 		case 3:
 			fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
-			go level3()
+			go level1()
 			time1()
 		default:
 			continueGame()
 		}
 			
+}
+
+func randomEvent() int{
+	randomEvent := dInfo.RandomNumofDrag + hInfo.RandomNumofHero
+	var health int
+		if randomEvent < 6 && randomEvent%2 != 0{
+		  fmt.Println("Случайное событие! Молния ударила Героя и отняла 20 hp")
+		  hInfo.Health -=20
+		  health = hInfo.Health
+		  if hInfo.Health > 0{ //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни героя не отобразится
+			fmt.Println("Уровень жизни Героя: ",hInfo.Health)//показывает уровень жизни герояы
+		  }
+		}else if randomEvent < 6 && randomEvent%2 == 0{
+		  fmt.Println("Случайное событие! Молния ударила Дракона и отняла 20 hp")
+		  dInfo.Health -=20
+		  health = dInfo.Health
+		  if dInfo.Health > 0 { //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни дракона не отобразится
+			fmt.Println ( "уровень жизни Дракона: ", dInfo.Health )//инфа о уровни жизни дракона
+		  }
+		}
+	return health
+}
+
+func fatiqueHero() int{
+	hInfo.Fatique += 5//если герой нанес удар, то усталость +5
+	if hInfo.Fatique == 30 && hInfo.RandomNumofHero%2 !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
+        fmt.Println("Герой промахнулся!")
+		hInfo.RandomNumofHero = 0
+		hInfo.Fatique = 0//обнуляем усталость героя
+	}
+	return hInfo.RandomNumofHero
+}
+
+func fatiqueDrag() int{
+	dInfo.Fatique += 5//если дракон нанес удар, то усталость +5
+	if dInfo.Fatique == 30 && dInfo.RandomNumofDrag%2 !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
+	    fmt.Println("Дракон промахнулся!")
+		dInfo.RandomNumofDrag = 0
+		dInfo.Fatique = 0//обнуляем усталость дракона
+	}
+	return dInfo.RandomNumofDrag
+}
+
+func angerHero() int {
+	rand.Seed(time.Now().Unix())
+	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
+	h := rand.Int() % len(missORnot)
+	hh := missORnot[h]
+	 if hInfo.Anger == 30{
+		fmt.Println("Герой зол, +20 к Его урону, +больше шансов промахнуться")
+	 }
+	if hInfo.Anger == 30 && hh%2 == 0{
+		hInfo.RandomNumofHero +=20
+	}else if hInfo.Anger == 30 && hh%2 != 0 {
+		hInfo.RandomNumofHero = 0
+	    fmt.Println("Герой промахнулсяяяяяя!!!")
+	}
+	dInfo.Anger +=5
+	return  hInfo.RandomNumofHero
+}
+func angerDrag() int {
+	rand.Seed(time.Now().Unix())
+	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
+	n := rand.Int() % len(missORnot)
+	nn := missORnot[n]
+	if dInfo.Anger == 30{
+		fmt.Println("Дракон зол, +20 к Его урону, +больше шансов промахнуться")
+	}
+	if dInfo.Anger == 30 && nn%2 == 0 { //если уровень злости равен 30 и остаток от дел
+		dInfo.RandomNumofDrag +=20
+	}else if dInfo.Anger == 30 && nn%2 != 0{
+		dInfo.RandomNumofDrag = 0
+	    fmt.Println("Дракон промахнулсяяяяя!!!")
+	}
+	hInfo.Anger += 5
+	return dInfo.RandomNumofDrag
+}
+
+func armor() int{
+	rand.Seed(time.Now().Unix())
+	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, 19,21,31,33,37,39, }
+	n := rand.Int() % len(missORnot)
+	nn := missORnot[n]
+	if hInfo.Health < 80 && nn%2 == 0 {
+		fmt.Println("Активирована броня +",hInfo.Armor,"hp")
+		hInfo.Health +=hInfo.Armor
+	}
+	if hInfo.Health > 100{
+		hInfo.Health = 100
+	}
+	return hInfo.Health
 }
