@@ -51,13 +51,14 @@ func main(){
 //function of Selecting item of menu
 func selectItemMenu(){
 	    fmt.Println("Нажмите цифру 1 для начала игры или цифру, 2 для настройки игры, 3 для продолжения сохраненной игры")
-		itemMenu :=bufio.NewScanner(os.Stdin)
-		itemMenu.Scan()
-		iMenu := strings.TrimSpace(itemMenu.Text())
-		switch iMenu{
+		  itemMenu :=bufio.NewScanner(os.Stdin)
+		  itemMenu.Scan()
+		  iMenu := strings.TrimSpace(itemMenu.Text())
+		  switch iMenu{
 			case "1": 
 				if dInfo.setAutoDragName ==false{
-					nameforperson()
+					nameOfHero()
+		      nameOfDrag()
 					break
 				}else if dInfo.setAutoDragName == true{
 					//fmt.Println("Задайте имя Вашего героя")
@@ -100,7 +101,7 @@ func configNameOfDragMenu(){
 		}
 }
 
-func randomNameOfDrag(){
+func randomNameOfDrag() string{
 	fmt.Println("Идет загрузка случайного имени дракона.....Ждите....")
     dragName := map[string]string{}
     response, err := http.Get("https://uinames.com/api/")
@@ -115,16 +116,7 @@ func randomNameOfDrag(){
   json.Unmarshal(responseData, &dragName)
 	fmt.Println("Случайное имя дракона: ",string(dragName["name"]))
 	dInfo.Name = string(dragName["name"])
-}
-
-//function of selecting person name
-func nameforperson(){
-	if dInfo.setAutoDragName == false{
-		nameOfHero()
-		nameOfDrag()
-	}else if dInfo.setAutoDragName == true{
-		nameOfHero()
-	}
+	return dInfo.Name
 }
 
 func nameOfHero(){
@@ -141,6 +133,7 @@ func nameOfHero(){
 		 break
 	    }
 	}
+	
 }
 
 func nameOfDrag() {
@@ -243,7 +236,7 @@ func level1() {
 			
 		
 
-			fmt.Println("\n")
+			//fmt.Println("\n")
 
 			if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
 				dInfo.Count += 1
@@ -280,9 +273,7 @@ func level1() {
 			hInfo.Health = hInfo.Health - randomNumofDrag
 			fmt.Println(heroHealthMsg,hInfo.Health) 
 		 }
-
-		 
-	}
+  }
 }
 
 func level2() {
@@ -349,7 +340,7 @@ func level2() {
 				}
 			}
 			
-		  fmt.Println("\n")
+		  //fmt.Println("\n")
 			rand.Seed(time.Now().Unix())
 	        missORnot = []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
 	        n := rand.Int() % len(missORnot)
@@ -456,7 +447,7 @@ func level3() {
 					os.Exit(1)
 				}
 			}
-			fmt.Println("\n")
+			//fmt.Println("\n")
       if dInfo.Health > 0 && randomNumofDrag%2 !=0 {
 				dInfo.Count += 1
 				fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
@@ -611,14 +602,18 @@ func continueGame() {
 		fmt.Println("Данные сохраненной игры:\nУровень игры: ", savedInfo.Level)
 		fmt.Println("Имя героя: ",  hInfo.Name, "Оружие героя: ", hInfo.Weapon, "Уровень жизни: ",hInfo.Health, "Кол-во ходов: ",hInfo.Count)
 		fmt.Println("Имя дракона: ",dInfo.Name, "Уровень жизни: ",dInfo.Health, "Кол-во ходов: ",dInfo.Count)
-		fmt.Println("\n")
-	  if savedInfo.Level == 1 {
+		//fmt.Println("\n")
+	  switch savedInfo.Level{
+		case 1:
 			level1()
-		} else if savedInfo.Level ==2 {
+		case 2:
 			level2()
-		}else if savedInfo.Level == 3{
-		fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
+		case 3:
+			fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
 			go level3()
 			time1()
-	  }
+		default:
+			continueGame()
+		}
+			
 }
