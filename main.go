@@ -16,13 +16,13 @@ var timer1 *time.Timer
 
 type Hero struct {
 	Name string
-	Health, Armor, Damage,Fatique, Anger, Count int
+	Health, Armor, Damage,Fatique, Anger, Count,RandomNumofHero int
 	Weapon string
 	hAct, hHealthUp bool
 }
 type Drag struct{
 	Name string
-	Health, Damage, Fatique, Anger, Count int
+	Health, Damage, Fatique, Anger, Count,RandomNumofDrag int
 	setAutoDragName bool
 }
 type Save struct {
@@ -30,41 +30,25 @@ type Save struct {
 	HeroHealth, DragHealth , HeroFatique, DragFatique, HeroAnger, DragAnger, HeroCount, DragCount, Level int
 	SaveORnot bool
 }
-
-var ( dInfo = &Drag { "", 100, 20, 0, 0, 0, false,})
-var ( hInfo = &Hero { 
-	"", 100, 30, 20, 0, 0, 0,"", false, false,
+var ( dInfo = &Drag { "", 100, 20, 0, 0, 0,0, false,})
+  var ( hInfo = &Hero { 
+	"", 100, 30, 20, 0, 0, 0, 0,"", false, false,
     }
 )
 var (savedInfo = &Save {})
 
 func main(){
-	fmt.Println("Добро пожаловать в игру Герой против Дракона!!!")
+  
 	fmt.Println("============\nГлавное меню\n=========")
 	fmt.Println("1.Начать новую игру\n2.Настройки \n3.Продолжить сохраненную игру\n============")
 	CallingSpecificFunction()
-	SelectItemMenuOfWeapon()
-	//if savedInfo.SaveORnot != true {
+	if savedInfo.SaveORnot != true {
+		SelectItemMenuOfWeapon()
   MenuLevelOfGame()
-	//}
+	}
 }
 
-
-func ExistValueOfMainMenuAndLevelMenu(n string) bool{
-	    switch n{
-			case "1": 
-			  return true
-			case "2": 
-			  return true
-			case "3":
-			  return true
-			default:
-				return false
-			}
-}
-
-
-func CallingSpecificFunction() bool{
+func CallingSpecificFunction() string{
 	fmt.Println("Нажмите цифру 1 для начала игры или цифру, 2 для настройки игры, 3 для продолжения сохраненной игры") 
 	iMenu := AcceptInput()
 	  switch iMenu{
@@ -76,54 +60,35 @@ func CallingSpecificFunction() bool{
 				InputNameOfHero()
 				GetAndOutputRandomNameOfDragon()
 		}
-		return true
 	  case "2": 
 			InputItemMenuOfTuningDragonName()
-			return true
 	  case "3":
 			ContinueGame()
-			return true
 		default:
-			CallingSpecificFunction()
-			return false
+			fmt.Println("Нажмите цифру 1 для начала игры или цифру, 2 для настройки игры, 3 для продолжения сохраненной игры") 
+			AcceptInput()
 		}
+		return iMenu
 }
 
 //Данную функцию я не стал тестировать, так как эта функция самого ЯП, принмает ввод пользователя.
 func InputItemMenuOfTuningDragonName(){
 	var iMenu string
 		fmt.Println("Нажмите цифру 1 для выбора имени дракона пользователем, цифру 2 для случайного имени \n1.Выбор пользователя \n2.Случайное имя дракона")
-		itemMenu :=bufio.NewScanner(os.Stdin)
-		itemMenu.Scan()
-		iMenu = strings.TrimSpace(itemMenu.Text())
-		ExistValueOfTuningNameDragon(iMenu)
+		iMenu = AcceptInput()
 		switch iMenu{
 			case "1": 
-				fmt.Println("Вы выбрали функцию ввода имени Дракона пользователем")
+				//fmt.Println("Вы выбрали функцию ввода имени Дракона пользователем")
 				 main()
 				dInfo.setAutoDragName = false
 			case "2":
 				dInfo.setAutoDragName = true
-				fmt.Println("Вы выбрали функцию случайного ввода имени Дракона")
+				//fmt.Println("Вы выбрали функцию случайного ввода имени Дракона")
 			 main()
 		 default:
 			InputItemMenuOfTuningDragonName()
 		}	
 }
-
-//Даная функция протестирована
-//Логика функции-проверить выбрано ли (нужное) значение или нет для настройки случаного имени дракона
-func ExistValueOfTuningNameDragon(n string) bool{
-	switch n{
-		case "1": 
-			return true
-		case "2":
-	    return true
-	 default:
-			return false
-  }
-}
-
 
 func GetAndOutputRandomNameOfDragon() {
 	fmt.Println("Идет загрузка случайного имени дракона.....Ждите....")
@@ -145,242 +110,83 @@ func GetAndOutputRandomNameOfDragon() {
 
 
 //Данную функцию не стал тестить так это ф-ии ЯП
-func InputNameOfHero() string{
-	for {
-		fmt.Println("Введите имя Героя: ")
-		heroName :=bufio.NewScanner(os.Stdin)
-		heroName.Scan()
-		hInfo.Name = strings.TrimSpace(heroName.Text())
-		if len(hInfo.Name)>0{
-			fmt.Println("Имя Героя: ", hInfo.Name)
-			break
-	  }
-		IfNameExist(hInfo.Name)
-	 }
-	 return hInfo.Name
-}
-
-//Данную функцию я протестировал
-//Логика функции проверить ввел ли пользователь значение имени Героя и Дракона
-func IfNameExist(n string) bool{
-    if n == ""{
-		return false
-	}else{
-		return true
+func InputNameOfHero()string{
+ for{
+	fmt.Println("Введите имя Героя: ")
+	hInfo.Name = AcceptInput()
+	PrintHeroName(hInfo.Name)
+	if len(hInfo.Name)>0{
+		fmt.Println("Имя Героя: ", hInfo.Name)
+		break
 	}
+ }
+return hInfo.Name
 }
 
-//Данную функцию не стал тестить так это ф-ия ЯП
+func PrintHeroName(n string) bool{
+	if n != ""{
+		//fmt.Println("Имя героя: ",n)
+		return true
+	}else{
+		return false
+	}
+	
+}
+
 func InputNameOfDrag(){
 	for {
 		fmt.Print("Введите имя Дракона: ")
-		dragName := bufio.NewScanner(os.Stdin)
-	  dragName.Scan()
-		dInfo.Name = strings.TrimSpace(dragName.Text())
+	  dInfo.Name = AcceptInput()
 	  if len(dInfo.Name)>0{
 			fmt.Println("Имя Дракона: ", dInfo.Name)
 			break
 		}
-		IfNameExist(dInfo.Name)
 	}
 }
 
 func MenuLevelOfGame() {
-	fmt.Println("Меню выбора уровня сложности игры")
-	fmt.Println("===========")
-	fmt.Println("1.Легкий \n2.Средний\n3.Сложный")
-	fmt.Println("Нажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
-	  itemMenu :=bufio.NewScanner(os.Stdin)
-		itemMenu.Scan()
-		iMenu := itemMenu.Text()
-		ExistValueOfMainMenuAndLevelMenu(iMenu)
+	fmt.Println("Меню выбора уровня сложности игры\n===========\n1.Легкий \n2.Средний\n3.Сложный\nНажмите цифру 1 для выбора легкого уровня, 2 для среднего уровня, 3 для сложного уровня")
+	  iMenu := AcceptInput()
 		switch iMenu {
 			case "1": 
 			  savedInfo.Level = 1
-				fmt.Println("ЛЕГКИЙ УРОВЕНЬ")
+				//fmt.Println("ЛЕГКИЙ УРОВЕНЬ")
 				Battle()
 			case "2": 
 			  savedInfo.Level = 2
-				fmt.Println("СРЕДНИЙ УРОВЕНЬ")
+				//fmt.Println("СРЕДНИЙ УРОВЕНЬ")
 				Battle()
       case "3":
 				savedInfo.Level = 3
-				fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
+				//fmt.Println("СЛОЖНЫЙ УРОВЕНЬ. ВЫ ДОЛЖНЫ СДЕЛАТЬ ХОД В ТЕЧЕНИИ 5 СЕКУНД!!!")
 			  go Battle()
 				Time1()
 			default:
 				MenuLevelOfGame()
 			}
-			WasSendedValueOfLevel(savedInfo.Level)
 }
 
-//Данную функцию я протестил
-//Логика функции - Отпралено ли значение уровня сложности игры
-func WasSendedValueOfLevel(i int) bool{
-	switch i{
-	case 1:
-		return true
-	case 2:
-		return true
-	case 3:
-		return true
-	default:
-	  return false
-	}
-}
-
-//Данная функция не протестирована
-func SelectItemMenuOfWeapon() {
-	fmt.Println("Оружейный арсенал героя\n===================")
-	fmt.Println("1.Меч \n2.Топор \n3.Коса \n4.Серп\nНажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
-  fmt.Println("")
+func SelectItemMenuOfWeapon() string{
+	fmt.Println("Оружейный арсенал героя\n===================\n1.Меч \n2.Топор \n3.Коса \n4.Серп\nНажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
 	  iMenu := AcceptInput()
 		switch iMenu {
     case "1":
-			fmt.Println("Вы выбрали Меч")
 			hInfo.Weapon = "Меч"
 		case "2":
-			fmt.Println("Вы выбрали Топор")
 			hInfo.Weapon = "Топор"
 		case "3":
-			fmt.Println("Вы выбрали Косу")
 			hInfo.Weapon = "Коса"
 		case "4":
-			fmt.Println("Вы выбрали Серп")
 			hInfo.Weapon = "Серп"
 		default:
-			fmt.Println("Нажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
+			//fmt.Println("Нажмите цифру 1 для выбора Меча, 2 для выбора Топора, 3 для выбора Косы, 4 для выбора Серпа")
 			SelectItemMenuOfWeapon()
 		}
-		CheckValueOfSelectedWeapon(hInfo.Weapon)
+		return hInfo.Weapon
 }
-
-// Данная функция протесирована
-//Логика функции - проверить передается ли нужное значение оружия
-func CheckValueOfSelectedWeapon(n string) bool{
-  switch n{
-	case "Меч":
-		return true
-	case "Топор":
-		return true
-	case "Коса":
-	  return true
-	case "Серп":
-	  return true
-	default:
-		return false
-	}
-}
-
-func Battle() {
-	heroHealthMsg := "Уровень жизни героя: "
-	dragHealthMsg := "Уровень жизни дракона: "
-	var RandomNumofDrag,RandomNumofHero int
-	weaponGObad:=1
-	for {
-		//rand.Seed(time.Now().UnixNano())
-		if savedInfo.Level == 3{
-    RandomNumofHero = random(1, 10)	
-		}
-		 RandomNumofHero = random(1, 20)
-		 RandomNumofDrag = random(1, 20)
-		ActionHero()
-
-		if savedInfo.Level == 2{
-			RandomEvent()
-		}
-		if hInfo.hAct == true {
-			if savedInfo.Level == 3{
-				timer1.Stop()
-				Armor()
-			}
-			if hInfo.Health > 0{ //герой наносит удар if true
-				hInfo.Count += 1 //cчетчик
-                if savedInfo.Level == 3{
-					AngerHero()
-				}
-				fmt.Println("Герой наносит  удар!","Кол-во ходов Героя: ",hInfo.Count)//сколько ударов нанес герой
-				if savedInfo.Level ==  2{
-					RandomNumofHero -=weaponGObad // оружие тупится
-					FatiqueHero()
-				}
-				dInfo.Health = dInfo.Health - RandomNumofHero//минус жизни дракона
-				
-				if dInfo.Health > 0 {
-					fmt.Println ( dragHealthMsg, dInfo.Health )
-				}
-				if dInfo.Health <= 0 {
-					dInfo.Health = 0
-					fmt.Println(heroHealthMsg,hInfo.Health)// показывает уровень жизни героя
-					fmt.Println(dragHealthMsg,dInfo.Health," Количество ходов Дракона: ",dInfo.Count)//уровень жизни героя и кол-во ходов дракона
-					fmt.Println("Урааааа!!! Поздравляем, Вы выиграли!!! В качестве бонуса Вы получите крутую цитату...Ждите")
-					RandomQuote()
-					break
-				}
-			}
-			
-	        //fmt.Println("\n")
-
-			if dInfo.Health > 0 && RandomNumofDrag%2 !=0 {
-				dInfo.Count += 1
-					if savedInfo.Level == 3{
-						AngerDrag()
-					}
-					fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-				if savedInfo.Level == 2{
-					FatiqueDrag()
-				}
-				hInfo.Health = hInfo.Health - RandomNumofDrag
-				if hInfo.Health > 0{
-					fmt.Println(heroHealthMsg,hInfo.Health)//показывает уровень жизни герояы
-				}
-			} else if RandomNumofDrag%2 == 0{
-				dInfo.Health += 10 //Плюс для жизни дракона
-				if dInfo.Health > 100 {
-				   dInfo.Health = 100
-				}
-				fmt.Println("Дракон решил зализать раны")
-				fmt.Println(dragHealthMsg,dInfo.Health, heroHealthMsg,hInfo.Health)//инф-ия о жизни персонажей
-			}
-		 }
-		 if hInfo.hHealthUp == true{
-			hInfo.Health +=10
-			if hInfo.Health > 100{
-				hInfo.Health = 100
-			}
-			fmt.Println("Герой подлечился ", heroHealthMsg, hInfo.Health, dragHealthMsg,dInfo.Health)
-			fmt.Println("===========")
-			fmt.Println("Дракон наносит Вам ответный удар","Количество ходов Дракона: ",dInfo.Count)
-			hInfo.Health = hInfo.Health - RandomNumofDrag
-			fmt.Println(heroHealthMsg,hInfo.Health) 
-		 }
-		 if hInfo.Health <= 0 { //если уровень жизни героя ушел в минус
-			hInfo.Health = 0   //то присвоем ноль 
-			fmt.Println(heroHealthMsg,hInfo.Health, "Кол-во ходов Героя: ", hInfo.Count)//инфа о жизни героя и о кол-ве ходов
-			fmt.Println(dragHealthMsg,dInfo.Health) //инф-ия о жизни дракона
-			fmt.Println("Неудача!!! Вы проиграли!!!")
-			break
-		}
-		if savedInfo.Level == 3{
-			if hInfo.hAct == false || hInfo.hHealthUp == false{
-				go Time1()
-			}
-		}
-	}
-}
-
-
-//Данная функция не тестирована
-func random(min int, max int) int {
-	rand.Seed(time.Now().UnixNano())
-	return rand.Intn(max-min) + min
-}
-
 func ActionHero() {
 	fmt.Println("=========\n1.Атаковать\n2.Лечиться\n3.Сохранить и выйти\nВыберите действие героя - 1 для атаки, 2 для лечения, 3 сохранения игры\n==============")
-    action := bufio.NewScanner(os.Stdin)
-		action.Scan()
-		heroAction := action.Text()
+  heroAction := AcceptInput()
 		switch heroAction{
 		case "1":
 		  hInfo.hAct = true
@@ -398,38 +204,185 @@ func ActionHero() {
 	default:
 		ActionHero()
 	}
-	//CheckActionHero(heroAction)
 }
 
-/*func CheckActionHero(n string) bool{
-	switch n{
-	case "1":
-		if hInfo.hAct == true && hInfo.hHealthUp == false{
-			return true
+
+func Battle(){
+	//var winner string
+	
+	for{
+		if savedInfo.Level == 3{
+    hInfo.RandomNumofHero = random(1, 10)	
 		}
-	case "2":
-		if hInfo.hAct == false && hInfo.hHealthUp == true{
-			return true
+		 HeroDamage()
+		 DragDamage()
+		 ActionHero()
+    if savedInfo.Level == 2{
+			RandomEvent()
 		}
-	case "3":
-		return true
-	default:
-		 return false
+		//Hero ataack
+		if hInfo.hAct == true {
+			if savedInfo.Level == 3{
+				timer1.Stop()
+				Armor()
+			}
+			HeroAtack()
+			if hInfo.Health <= 0{
+				break
+			}
+			DragonHealthUp()
+		
+			//fmt.Println("\n")
+			DragonAtack()
+			if dInfo.Health <= 0{
+				break
+			}
+			 
+			HeroHealthUp()
+		 }
+
+		if savedInfo.Level == 3{
+			if hInfo.hAct == false || hInfo.hHealthUp == false{
+				go Time1()
+			}
+		}
+	}
+	//return winner
+}
+
+func HeroAtack()int{
+	if hInfo.Health > 0{ //герой наносит удар if true
+		hInfo.Count += 1 //cчетчик
+						if savedInfo.Level == 3{
+			AngerHeroDamage()
+		}
+		fmt.Println("Герой наносит  удар!")//сколько ударов нанес герой
+		if hInfo.RandomNumofHero == 0 {
+			fmt.Println("Герой помахнулсяяя")
+		}
+		ShowHeroActQuantity()
+		if savedInfo.Level ==  2{
+			weaponGObad:=1
+			hInfo.RandomNumofHero -=weaponGObad // оружие тупится
+			FatiqueHeroUp()
+		}
+		dInfo.Health = dInfo.Health - hInfo.RandomNumofHero//минус жизни дракона
+	}
+	DragonDead()
+	ShowDragonHealth()
+	return hInfo.RandomNumofHero
+}
+
+//Протестил
+func HeroHealthUp() int{
+	if hInfo.hHealthUp == true{
+		hInfo.Health +=10
+		if hInfo.Health > 100{
+			hInfo.Health = 100
+		}
+		fmt.Println("Герой подлечился ", ShowHeroHealth(), ShowDragonHealth())
+		fmt.Println("===========")
+		fmt.Println("Дракон наносит Вам ответный удар",ShowDragonActQuantity())
+		hInfo.Health = hInfo.Health - dInfo.RandomNumofDrag
+		ShowHeroHealth()
 	 }
-}*/
+	 return hInfo.Health
+}
+
+func DragonAtack() int{
+	if dInfo.Health > 0 && dInfo.RandomNumofDrag%2 ==0 {
+		dInfo.Count += 1
+			if savedInfo.Level == 3{
+				AngerDragDamage()
+			}
+			fmt.Println("Дракон наносит Вам ответный удар")
+			if dInfo.RandomNumofDrag == 0{
+        fmt.Println("Дракон промахнулсяяяя!")
+			}
+			ShowDragonActQuantity()
+		if savedInfo.Level == 2{
+			FatiqueDragUp()
+		}
+		hInfo.Health = hInfo.Health - dInfo.RandomNumofDrag
+		}
+	HeroDead()
+	ShowHeroHealth()
+	return dInfo.RandomNumofDrag
+}
+
+//Протестил
+func DragonHealthUp() int{
+	if dInfo.RandomNumofDrag%2 != 0{
+		dInfo.Health += 10 //Плюс для жизни дракона
+		if dInfo.Health > 100 {
+			dInfo.Health = 100
+		}
+		fmt.Println("Дракон решил зализать раны")
+		ShowDragonHealth()
+		//ShowHeroHealth(hInfo.Health) //инф-ия о жизни персонажей
+	}
+	return dInfo.Health
+}
+//Протестил
+func ShowDragonHealth() int{
+	if dInfo.Health >= 0 {
+		fmt.Println("Уровень жизни дракона: ", dInfo.Health)
+	}
+	return dInfo.Health
+}
+
+//Протестил
+func DragonDead() int{
+	if dInfo.Health < 0 {
+		dInfo.Health = 0
+		 fmt.Println("Урааааа!!! Поздравляем, Вы выиграли!!! В качестве бонуса Вы получите крутую цитату...Ждите")
+		 RandomQuote()
+	}
+	return dInfo.Health
+}
+ 
+//Протестил
+func ShowDragonActQuantity() int{
+	fmt.Println("Кол-во ходов дракона: ", dInfo.Count)
+	return dInfo.Count
+}
+//Протестил
+func ShowHeroActQuantity() int{
+	fmt.Println("Кол-во ходов героя: ", hInfo.Count)
+	return hInfo.Count
+}
+
+//Протестил
+func ShowHeroHealth() int{
+	if hInfo.Health >= 0{
+		fmt.Println("Уровень жизн героя: ",hInfo.Health)//показывает уровень жизни героя
+	}
+	return hInfo.Health
+}
+
+
+//Протестил
+func HeroDead() int{
+	if hInfo.Health < 0 { //если уровень жизни героя ушел в минус
+		hInfo.Health = 0   //то присвоем ноль 
+		fmt.Println("Неудача!!! Вы проиграли!!!")
+	}
+	return hInfo.Health
+}
+
+
 
 type Q struct{
 	Quotes map[string]interface{} `json:"quotes"`
 }
-
-//Данную функцию не стал тестить так это ф-ии ЯП
-//Сделат обработку ошибки, в случае ее получите цитату по умолчанию.
-func RandomQuote(){
+//Протестил
+func RandomQuote()string{
 	response, err := http.Get("https://aitorp6.herokuapp.com/quotes/api/random")
+	d:= "Если Ты не можешь дать имя своей функции, то Ты не понимаешь ее логики"
 	if err != nil {
-		fmt.Println("Не удалось загрузить цитату. Цитата по умолчанию")
-		fmt.Println("Если Ты не можешь дать имя своей функции, то Ты не понимаешь ее логики. Автор - @atabekovbekbolot")
-		return
+		 
+		fmt.Println("Не удалось загрузить цитату. Цитата по умолчанию", d)
+		return d
 	}
 	responseData, err := ioutil.ReadAll(response.Body)
 	if err != nil {
@@ -437,7 +390,9 @@ func RandomQuote(){
 	}
 	var quotes Q
   json.Unmarshal([]byte(responseData), &quotes)
-	fmt.Println("Ваш бонус: ",quotes.Quotes["quote"],"==Автор цитаты: ", quotes.Quotes["author"])
+	fmt.Println("Ваш бонус: ",quotes.Quotes["quote"])
+	d=quotes.Quotes["quote"].(string)
+	return d
 }
 
 //не стал тестить
@@ -474,22 +429,14 @@ func SaveGame(){
 }
 
 func ContinueGame() {
-	file, err := os.Open("savingData.json")
-    if err != nil{
-        fmt.Println(err) 
-        os.Exit(1) 
-    }
-    defer file.Close() 
-			
-				plan, _ := ioutil.ReadFile("savingData.json")
-				var data interface{}
-				
-				err = json.Unmarshal([]byte(plan), &data)
-				if err != nil{
-					fmt.Println(err) 
-					os.Exit(1) 
-			}
-			md := data.(map[string]interface{})
+	plan, _ := ioutil.ReadFile("savingData.json")
+	var data interface{}
+	err := json.Unmarshal([]byte(plan), &data)
+	if err != nil{
+		fmt.Println(err) 
+		os.Exit(1) 
+ }
+		md := data.(map[string]interface{})
 		hInfo.Name    = md["HeroName"].(string)
 		hInfo.Health  = int(md["HeroHealth"].(float64))
 		hInfo.Fatique = int(md["HeroFatique"].(float64))
@@ -506,7 +453,6 @@ func ContinueGame() {
 		fmt.Println("Данные сохраненной игры:\nУровень игры: ", savedInfo.Level)
 		fmt.Println("Имя героя: ",  hInfo.Name, "Оружие героя: ", hInfo.Weapon, "Уровень жизни: ",hInfo.Health, "Кол-во ходов: ",hInfo.Count)
 		fmt.Println("Имя дракона: ",dInfo.Name, "Уровень жизни: ",dInfo.Health, "Кол-во ходов: ",dInfo.Count)
-		//fmt.Println("\n")
 	  switch savedInfo.Level{
 		case 1:
 			Battle()
@@ -519,98 +465,141 @@ func ContinueGame() {
 		default:
 			ContinueGame()
 		}
-			
 }
 
+
+func random(min int, max int) int {
+	rand.Seed(time.Now().UnixNano())
+	return rand.Intn(max-min) + min
+}
 // протестил
 func RandomEvent() int{
-	RandomNumofDrag := random(1,20)
-	RandomNumofHero := random(1,20)
-	randomEvent := RandomNumofDrag + RandomNumofHero
-	var health int
-		if randomEvent < 6 && randomEvent%2 != 0{
-		  fmt.Println("Случайное событие! Молния ударила Героя и отняла 20 hp")
-		  hInfo.Health -=20
-		  health = hInfo.Health
-		  if hInfo.Health > 0{ //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни героя не отобразится
-			fmt.Println("Уровень жизни Героя: ",hInfo.Health)//показывает уровень жизни герояы
-		  }
-		}else if randomEvent < 6 && randomEvent%2 == 0{
-		  fmt.Println("Случайное событие! Молния ударила Дракона и отняла 20 hp")
-		  dInfo.Health -=20
-		  health = dInfo.Health
-		  if dInfo.Health > 0 { //это условие для того чтобы, если уровень жизни уйдет в минус то инф-ия о жизни дракона не отобразится
-			fmt.Println ( "уровень жизни Дракона: ", dInfo.Health )//инфа о уровни жизни дракона
+	  HeroDamage()
+		if hInfo.RandomNumofHero< 3 && hInfo.RandomNumofHero%2 != 0{
+		  fmt.Println("Случайное событие! Молния ударила Героя и нанесла ему урон")
+		  hInfo.Health -=hInfo.RandomNumofHero
+		  if hInfo.Health > 0{
+			fmt.Println("Уровень жизни Героя: ",hInfo.Health)
 		  }
 		}
-	return health
-}
-
-//протестил
-func FatiqueHero() (RandomNumofHero int){
-	RandomNumofHero = random(1,20)
-	hInfo.Fatique += 5//если герой нанес удар, то усталость +5
-	if hInfo.Fatique == 30 && RandomNumofHero%2 !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
-    fmt.Println("Герой промахнулся!")
-	  RandomNumofHero = 0
-		hInfo.Fatique = 0//обнуляем усталость героя
+		return hInfo.RandomNumofHero
 	}
-	return
-}
-
-//протестил
-func FatiqueDrag() (RandomNumofDrag int){
-	RandomNumofDrag = random(1,20)
-	fmt.Println(rand.Intn(100))
-	dInfo.Fatique += 5//если дракон нанес удар, то усталость +5
-	if dInfo.Fatique == 30 && RandomNumofDrag !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
-	    fmt.Println("Дракон промахнулся!")
-		RandomNumofDrag = 0
-		dInfo.Fatique = 0//обнуляем усталость дракона
-		}
-	return
-}
-//
-func AngerHero() int {
-	var RandomNumofHero int
-	RandomNumofHero = random(1,20)
-	rand.Seed(time.Now().Unix())
-	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
-	h := rand.Int() % len(missORnot)
-	hh := missORnot[h]
-	 if hInfo.Anger == 30{
-		fmt.Println("Герой зол, +20 к Его урону, +больше шансов промахнуться")
+// протестил
+func RandomEvent2() int{
+	DragDamage()
+	if dInfo.RandomNumofDrag < 3 && dInfo.RandomNumofDrag%2 == 0{
+		fmt.Println("Случайное событие! Молния ударила Дракона и нанесла ему урон")
+		dInfo.Health -= dInfo.RandomNumofDrag
+		if dInfo.Health > 0 {
+		fmt.Println ( "Уровень жизни Дракона: ", dInfo.Health )
 	 }
-	if hInfo.Anger == 30 && hh%2 == 0{
-		RandomNumofHero +=20
-	}else if hInfo.Anger == 30 && hh%2 != 0 {
-		RandomNumofHero = 0
-	    fmt.Println("Герой промахнулсяяяяяя!!!")
 	}
-	dInfo.Anger +=5
-	return  RandomNumofHero
+	return dInfo.RandomNumofDrag
 }
 
-//Протестил
-func AngerDrag() int {
-	var RandomNumofDrag int
-	RandomNumofDrag = random(1,20)
+//протестил
+func HeroDamage() int{
+	hInfo.RandomNumofHero = random(1,20)
+	return hInfo.RandomNumofHero
+}
+//протестил
+func FatiqueHeroUp() int{
+	HeroDamage()
+	hInfo.Fatique += 5
+	if hInfo.Fatique  == 30 && hInfo.RandomNumofHero%2 !=0 { 
+	  hInfo.RandomNumofHero = 0
+	}
+	if hInfo.Fatique  == 30{
+		hInfo.Fatique = 0
+	}
+	return hInfo.Fatique
+}
+
+//протестил
+func DragDamage() int{
+	dInfo.RandomNumofDrag = random(1,20)
+	return dInfo.RandomNumofDrag
+}
+//протестил
+func FatiqueDragUp() int{
+	dInfo.Fatique += 5//если дракон нанес удар, то усталость +5
+	if dInfo.Fatique  == 30 && dInfo.RandomNumofDrag !=0 { //если усталость равна 30 и остаток от деления на 2 не равен 0, то есть шанс промахнуться
+	  fmt.Println("Дракон промахнулся!")
+		dInfo.RandomNumofDrag = 0
+		}
+	if dInfo.Fatique  == 30 {
+		dInfo.Fatique = 0
+	}
+	return dInfo.Fatique
+}
+
+//========================================================================================
+//протестил
+func AngerHeroDamage() int {
 	rand.Seed(time.Now().Unix())
 	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
 	n := rand.Int() % len(missORnot)
 	nn := missORnot[n]
+
+	CheckAngerHero()
+
+  if dInfo.Anger == 30 && nn%2 == 0 { //если уровень злости равен 30 и остаток от дел
+		hInfo.RandomNumofHero +=20
+	}else if dInfo.Anger == 30 && nn%2 != 0{
+		hInfo.RandomNumofHero = 0
+	}
+	if hInfo.Anger == 30{
+		hInfo.Anger = 0
+	}
+	DragAngerUp()
+  return hInfo.RandomNumofHero
+}
+//протестил
+func CheckAngerHero() int{
+	if hInfo.Anger == 30{
+		fmt.Println("Герой зол, +20 к Его урону, +больше шансов промахнуться")
+	}
+ return hInfo.Anger
+}
+//протестил
+func DragAngerUp()int{
+	dInfo.Anger += 5
+	return dInfo.Anger
+}
+//========================================================================================
+//протестил
+func AngerDragDamage() int {
+	rand.Seed(time.Now().Unix())
+	missORnot := []int{ 15, 17, 2, 3, 5, 7, 9, 11, 13, }
+	n := rand.Int() % len(missORnot)
+	nn := missORnot[n]
+  CheckAngerDrag()
+  if dInfo.Anger == 30 && nn%2 == 0 { //если уровень злости равен 30 и остаток от дел
+		dInfo.RandomNumofDrag +=20
+	}else if dInfo.Anger == 30 && nn%2 != 0{
+		dInfo.RandomNumofDrag = 0
+	}
+	if dInfo.Anger ==30{
+		dInfo.Anger = 0
+	}
+  HeroAngerUp()
+  return dInfo.RandomNumofDrag
+}
+//протестил
+func CheckAngerDrag() int{
 	if dInfo.Anger == 30{
 		fmt.Println("Дракон зол, +20 к Его урону, +больше шансов промахнуться")
 	}
-	if dInfo.Anger == 30 && nn%2 == 0 { //если уровень злости равен 30 и остаток от дел
-		RandomNumofDrag +=20
-	}else if dInfo.Anger == 30 && nn%2 != 0{
-		RandomNumofDrag = 0
-	    fmt.Println("Дракон промахнулсяяяяя!!!")
-	}
-	hInfo.Anger += 5
- return RandomNumofDrag
+ return dInfo.Anger
 }
+
+//протестил
+func HeroAngerUp()int{
+	hInfo.Anger += 5
+	return hInfo.Anger
+}
+//========================================================================================
+
 //протестил
 func Armor() int{
 	if hInfo.Count == 5{
@@ -622,6 +611,7 @@ func Armor() int{
 	}
 	return hInfo.Health
 }
+//
 func AcceptInput() string {
 	scan := bufio.NewScanner(os.Stdin)
 	scan.Scan()
